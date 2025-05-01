@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-x&jfw59vt559z7w-8qexgbr%inpfm#vu-=r2e+i#9(9lpyubx0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["qera-vivek-dev.onrender.com"]
 
 
 # Application definition
