@@ -63,9 +63,9 @@ class UserViewSet(ModelViewSet):
                             status=status.HTTP_401_UNAUTHORIZED)
 
 
-        if not user.otp_verified:
-            return Response({"error": "User not verified. Please verify OTP first."},
-                            status=status.HTTP_403_FORBIDDEN)
+        # if not user.otp_verified:
+        #     return Response({"error": "User not verified. Please verify OTP first."},
+        #                     status=status.HTTP_403_FORBIDDEN)
 
         token, _ = Token.objects.get_or_create(user=user)
         return Response({
