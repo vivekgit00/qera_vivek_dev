@@ -87,7 +87,14 @@ class UserViewSet(ModelViewSet):
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated], url_path='update_profile')
     def update_profile(self, request):
         user = request.user
-        serializer = self.get_serializer(user, data=request.data, partial=True)
+
+        # Define allowed fields
+        allowed_fields = ['name', 'city', 'state', 'address1', 'address2', "pincode", 'country']        
+
+        # Filter the incoming data to only include allowed fields
+        update_data = {field: value for field, value in request.data.items() if field in allowed_fields}
+
+        serializer = self.get_serializer(user, data=update_data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
