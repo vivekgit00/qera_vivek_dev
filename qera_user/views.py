@@ -27,45 +27,45 @@ class UserViewSet(ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='verify-otp')
     def verify_otp(self, request):
-        print(request.data)
-        phone = request.data.get('phone_number')
+        email = request.data.get('email')
         otp = request.data.get('otp')
         try:
-            user = User.objects.get(phone_number=phone)
-        except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            user = User.objects.get(email=email)
+            if user.otp != otp:
+                return Response({'detail': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Check if OTP is expired (e.g., valid for 10 minutes)
+            if timezone.now() - user.otp_created_at > timedelta(minutes=10):
+                return Response({'detail': 'OTP expired'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if user.otp == otp and user.otp_verified == False:
-            if timezone.now() - user.otp_created_at <= timedelta(minutes=5):
-                user.otp_verified = True
-                user.save()
-                return Response({'message': 'OTP verified successfully'}, status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'OTP expired'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            user.otp_verified = True
+            user.otp = None  # Optional: Clear OTP after verification
+            user.save()
+            return Response({'detail': 'OTP verified successfully'}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=False, methods=['post'], url_path='login')
     def login(self, request):
-        phone = request.data.get('phone_number')
-        password = request.data.get('password')
-
-        if not phone and not password:
-            return Response({'error': 'Phone number and password are required'}, status=status.HTTP_400_BAD_REQUEST)
+        email = request.data.get('email').strip()
+        password = request.data.get('password').strip()
+        print(email, password)
+        if not email or not password:
+            return Response({'error': 'email number and password are required'}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            user = User.objects.get(phone_number=phone)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         
         if not user.check_password(password):
-            return Response({"error": "Invalid phone number or password."},
+            return Response({"error": "Invalid email number or password."},
                             status=status.HTTP_401_UNAUTHORIZED)
 
 
-        # if not user.otp_verified:
-        #     return Response({"error": "User not verified. Please verify OTP first."},
-        #                     status=status.HTTP_403_FORBIDDEN)
+        if not user.otp_verified:
+            return Response({"error": "User not verified. Please verify OTP first."},
+                            status=status.HTTP_403_FORBIDDEN)
 
         token, _ = Token.objects.get_or_create(user=user)
         return Response({

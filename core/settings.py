@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-x&jfw59vt559z7w-8qexgbr%inpfm#vu-=r2e+i#9(9lpyubx0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["qera-vivek-dev.onrender.com"]
+ALLOWED_HOSTS = ["qera-vivek-dev.onrender.com", "127.0.0.1"]
 
 
 # Application definition
@@ -133,3 +133,14 @@ STATIC_URL = 'static/'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+#MAil
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "vivekdholakiya8888@gmail.com"
+EMAIL_HOST_PASSWORD = "impy ezjd ffim usiz"
+EMAIL_USE_TLS = True    

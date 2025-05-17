@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import User
 import random
 from django.utils import timezone
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 class RegisterSerialzer(serializers.ModelSerializer):
@@ -11,6 +13,8 @@ class RegisterSerialzer(serializers.ModelSerializer):
         model = User
         fields = ['name', 'email', 'phone_number', 'state', 'city', 'password']
 
+    def validate_email(self, value):
+        return value.lower()
     
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -21,6 +25,16 @@ class RegisterSerialzer(serializers.ModelSerializer):
         user.otp_created_at = timezone.now()
         user.save()
         print(f'OTP for {user.email} is {otp}')
+        send_mail(
+            subject='Your OTP for registration',
+            message=f'Your OTP is {otp}',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user.email],
+            fail_silently=False
+        )
         return user
+
+
+    
 
         
