@@ -1,15 +1,17 @@
 from django.db import models
+from qera_user.models import User
+from django.utils import timezone
 
 
-class Product(models.Model):
-    unique_code = models.CharField(max_length=16, null=True, blank=True)
-    name = models.CharField(max_length=100, null=True, blank=True)
-    activated = models.BooleanField(default=False)
-    datetime = models.DateTimeField(auto_now=True)
-    
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
+class ScanHistory(models.Model):  # or rename to Product if you want
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='scans')
+    unique_code = models.CharField(max_length=16)
+    name = models.CharField(max_length=100)
+    point = models.PositiveIntegerField()
+    scanned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'unique_code')  # 👈 prevents double scan by same user
+
     def __str__(self):
-        return self.name
-
+        return f"{self.user.email} - {self.unique_code}"

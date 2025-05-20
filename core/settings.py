@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     #app
     'qera_user',
+    'qera_app',
 ]
 
 MIDDLEWARE = [

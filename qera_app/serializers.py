@@ -1,8 +1,8 @@
-from rest_framework import serializers 
-from .models import Product
+from rest_framework import serializers
+from .models import ScanHistory  # or Product if you renamed it
 
-
-class Productserializer(serializers.ModelSerializer):
-    
+class ScanHistorySerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        model = ScanHistory
+        fields = ['id', 'unique_code', 'name', 'point', 'scanned_at']
+        read_only_fields = ['id', 'scanned_at']
