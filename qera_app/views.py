@@ -55,6 +55,7 @@ class ScanHistoryViewSet(viewsets.ModelViewSet):
             .filter(total_points__isnull=False)
             .order_by('-total_points')
         )
+        
 
         data = [
             {

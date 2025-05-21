@@ -103,3 +103,12 @@ class UserViewSet(ModelViewSet):
             return custom_response(message="Logged out successfully", status=1)
         except Exception as e:
             return custom_response(message=f"Logout failed: {str(e)}", status=0)
+
+    @action(detail=False, methods=['delete'], permission_classes=[IsAuthenticated], url_path='delete_user')
+    def delete_user(self, request):
+        user = request.user
+        try:
+            user.delete()
+            return custom_response(message="User deleted successfully", status=1)
+        except Exception as e:
+            return custom_response(message=f"User deletion failed: {str(e)}", status=0)
