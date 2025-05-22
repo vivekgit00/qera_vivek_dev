@@ -111,4 +111,10 @@ class UserViewSet(ModelViewSet):
             user.delete()
             return custom_response(message="User deleted successfully", status=1)
         except Exception as e:
-            return custom_response(message=f"User deletion failed: {str(e)}", status=0)
+            return custom_response(message=f"User deletion failed: {str(e)}", status=0) 
+    
+    @action(detail=False, methods=['get'], url_path='all_user')
+    def all_user(self, request):
+        users = User.objects.all()
+        serializer = self.get_serializer(users, many=True)
+        return custom_response(message="All users fetched successfully", status=1, data=serializer.data)
