@@ -135,7 +135,7 @@ class UserViewSet(ModelViewSet):
             Token.objects.filter(user=user).delete()
             token = Token.objects.create(user=user)
             return custom_response(
-                message="Password changed successfully",
+                message="Password changed successfully and News Token generated",
                 status=1,
                 data={"token": token.key}
             )
