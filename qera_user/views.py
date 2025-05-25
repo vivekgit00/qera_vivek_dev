@@ -118,3 +118,27 @@ class UserViewSet(ModelViewSet):
         users = User.objects.all()
         serializer = self.get_serializer(users, many=True)
         return custom_response(message="All users fetched successfully", status=1, data=serializer.data)
+    
+    
+    @action(detail=False, methods=['post'], url_path='forget_password')
+    def forget_password(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        try:
+            user = User.objects.filter(email=email).first()
+            if not user:
+                return custom_response(message="User not found", status=0)
+            if not user.otp_verified:
+                return custom_response(message="User not verified. Please verify OTP first.", status=0)
+            user.set_password(password)
+            user.save()
+            Token.objects.filter(user=user).delete()
+            token = Token.objects.create(user=user)
+            return custom_response(
+                message="Password changed successfully",
+                status=1,
+                data={"token": token.key}
+            )
+            
+        except User.DoesNotExist:
+            return custom_response(message="User not found", status=0)
