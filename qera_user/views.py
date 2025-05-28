@@ -142,3 +142,4 @@ class UserViewSet(ModelViewSet):
             
         except User.DoesNotExist:
             return custom_response(message="User not found", status=0)
+            
